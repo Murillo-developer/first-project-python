@@ -1,0 +1,91 @@
+import random
+import time
+
+class Jogador:
+    def __init__(self, nome, classe):
+        self.nome = nome
+        self.classe = classe
+        self.vida = 100
+        self.forca = random.randint(10, 20)
+        self.defesa = random.randint(5, 10)
+
+    def atacar(self):
+        return random.randint(1, self.forca)
+
+    def receber_dano(self, dano):
+        dano_recebido = max(0, dano - self.defesa)
+        self.vida -= dano_recebido
+        if self.vida < 0:
+            self.vida = 0
+
+    def esta_vivo(self):
+        return self.vida > 0
+
+class Monstro:
+    def __init__(self, nome):
+        self.nome = nome
+        self.vida = random.randint(50, 80)
+        self.forca = random.randint(5, 15)
+
+    def atacar(self):
+        return random.randint(1, self.forca)
+
+    def receber_dano(self, dano):
+        self.vida -= dano
+        if self.vida < 0:
+            self.vida = 0
+
+    def esta_vivo(self):
+        return self.vida > 0
+
+def batalha(jogador, monstro):
+    print(f"{jogador.nome} enfrenta {monstro.nome}!")
+    while jogador.esta_vivo() and monstro.esta_vivo():
+        print(f"Vida de {jogador.nome}: {jogador.vida} | Vida de {monstro.nome}: {monstro.vida}")
+        input("Pressione Enter para continuar...")
+        dano_jogador = jogador.atacar()
+        monstro.receber_dano(dano_jogador)
+        print(f"{jogador.nome} ataca {monstro.nome} causando {dano_jogador} de dano!")
+        if monstro.esta_vivo():
+            dano_monstro = monstro.atacar()
+            jogador.receber_dano(dano_monstro)
+            print(f"{monstro.nome} ataca {jogador.nome} causando {dano_monstro} de dano!")
+
+    if jogador.esta_vivo():
+        print(f"{jogador.nome} venceu a batalha contra {monstro.nome}!")
+    else:
+        print(f"{jogador.nome} foi derrotado por {monstro.nome}!")
+
+def main():
+    print("Bem-vindo ao jogo de RPG!")
+    nome_jogador = input("Qual é o seu nome? ")
+    print(f"Olá, {nome_jogador}! Escolha a sua classe:")
+    print("1. Guerreiro")
+    print("2. Mago")
+    print("3. Arqueiro")
+    opcao = input("Digite o número da classe desejada: ")
+
+    if opcao == '1':
+        jogador = Jogador(nome_jogador, "Guerreiro")
+    elif opcao == '2':
+        jogador = Jogador(nome_jogador, "Mago")
+    elif opcao == '3':
+        jogador = Jogador(nome_jogador, "Arqueiro")
+    else:
+        print("Opção inválida. Escolhendo classe aleatória...")
+        jogador = Jogador(nome_jogador, random.choice(["Guerreiro", "Mago", "Arqueiro"]))
+
+    monstros = [Monstro("Ogro"), Monstro("Esqueleto"), Monstro("Dragão")]
+
+    for monstro in monstros:
+        input(f"Prepare-se para enfrentar {monstro.nome}! Pressione Enter para continuar...")
+        batalha(jogador, monstro)
+        if not jogador.esta_vivo():
+            print("Fim do jogo. Você foi derrotado!")
+            break
+
+    if jogador.esta_vivo():
+        print("Parabéns! Você venceu todos os monstros e completou a aventura!")
+
+if __name__ == "__main__":
+    main()
